@@ -1,5 +1,6 @@
 package tmall.servlet;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,12 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import tmall.bean.Product;
 import tmall.bean.ProductImage;
 import tmall.dao.ProductImageDAO;
+import tmall.util.ImageUtil;
 import tmall.util.Page;
 
 public class ProductImageServlet extends BaseBackServlet {
@@ -55,6 +58,18 @@ public class ProductImageServlet extends BaseBackServlet {
 				try(FileOutputStream fos = new FileOutputStream(file);){
 					byte b[] = new byte[1024 * 1024]; 
 					int length = 0;
+					while ((length = is.read()) != -1){
+						fos.write(b, 0, length);
+					}
+					fos.close();
+
+					BufferedImage bufferedImage = ImageUtil.change2jpg(file);
+					ImageIO.write(bufferedImage, "jsp", file);
+					if (ProductImageDAO.type_single.equals(productImage.getType())){
+						File file_small = new File(imageFolder_small, fileName);
+						File file_middle = new File(imageFolder_middle, fileName);
+						
+					}
 				}catch (Exception e) {
 					e.printStackTrace();
 				}
